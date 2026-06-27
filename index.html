@@ -1,1 +1,506 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5" />
+  <title>FreshMart · Belanja Cepat, Segar, Lengkap</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Nunito:wght@400;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Font Awesome 6 (Free) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', 'Poppins', 'Nunito', sans-serif;
+    }
+    body {
+      background: #f8fafc;
+      color: #1e293b;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark {
+      background: #0b1a1a;
+      color: #e2e8f0;
+    }
+    /* scroll smooth & back to top */
+    html { scroll-behavior: smooth; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background: #2d6a4f; border-radius: 20px; }
+    ::-webkit-scrollbar-track { background: #e9ecef; }
 
+    /* glassmorphism & utility */
+    .glass {
+      background: rgba(255, 255, 255, 0.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 30px rgba(0, 20, 10, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    .dark .glass {
+      background: rgba(10, 30, 25, 0.7);
+      border-color: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #1b4332, #2d6a4f);
+      color: white;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 40px;
+      font-weight: 600;
+      transition: 0.25s ease;
+      box-shadow: 0 6px 16px rgba(29, 78, 56, 0.25);
+      cursor: pointer;
+    }
+    .btn-primary:hover {
+      transform: scale(1.03) translateY(-2px);
+      box-shadow: 0 12px 28px rgba(29, 78, 56, 0.35);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid #2d6a4f;
+      color: #2d6a4f;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-weight: 600;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .btn-outline:hover {
+      background: #2d6a4f;
+      color: white;
+    }
+    .dark .btn-outline { border-color: #52b788; color: #52b788; }
+    .dark .btn-outline:hover { background: #52b788; color: #0b1a1a; }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      z-index: 999;
+      padding: 10px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(0,0,0,0.02);
+      transition: 0.3s;
+    }
+    .dark .navbar { background: rgba(10, 25, 22, 0.85); border-bottom: 1px solid #1e3a32; }
+    .nav-logo { font-size: 1.8rem; font-weight: 800; color: #1b4332; }
+    .dark .nav-logo { color: #a7f3d0; }
+    .nav-logo i { color: #2d6a4f; margin-right: 6px; }
+    .nav-links { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+    .nav-links a { text-decoration: none; color: #1e293b; font-weight: 500; font-size: 0.95rem; transition: 0.2s; }
+    .dark .nav-links a { color: #d1d5db; }
+    .nav-links a:hover { color: #2d6a4f; }
+    .nav-icons { display: flex; gap: 16px; font-size: 1.2rem; }
+    .nav-icons i { cursor: pointer; transition: 0.2s; }
+    .nav-icons i:hover { color: #2d6a4f; transform: scale(1.1); }
+    .hamburger { display: none; font-size: 1.8rem; cursor: pointer; }
+
+    /* Hero Slider */
+    .hero-slider {
+      margin-top: 80px;
+      width: 100%;
+      height: 420px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 0 0 40px 40px;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      display: flex;
+      align-items: center;
+      padding: 0 8%;
+      background: linear-gradient(135deg, #d8f3dc, #b7e4c7);
+      color: #0b2b1e;
+    }
+    .slide.active { opacity: 1; }
+    .slide h1 { font-size: 3rem; font-weight: 800; max-width: 600px; }
+    .slide p { font-size: 1.2rem; margin: 16px 0; }
+    .slide .btn-group { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    /* kategori grid */
+    .kategori-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 18px;
+      margin: 30px 0;
+    }
+    .kategori-item {
+      background: white;
+      padding: 14px 8px;
+      border-radius: 28px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.02);
+      transition: 0.2s;
+      cursor: pointer;
+      font-weight: 500;
+      border: 1px solid #f0f5f0;
+    }
+    .dark .kategori-item { background: #1e352e; border-color: #2b4a3e; color: #e2e8f0; }
+    .kategori-item i { font-size: 2.2rem; display: block; margin-bottom: 6px; color: #2d6a4f; }
+    .kategori-item:hover { transform: translateY(-6px); box-shadow: 0 16px 30px rgba(0,40,20,0.1); }
+
+    /* produk card */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 24px;
+      margin: 28px 0;
+    }
+    .product-card {
+      background: white;
+      border-radius: 28px;
+      padding: 16px 14px;
+      transition: 0.25s;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(0,0,0,0.02);
+      position: relative;
+    }
+    .dark .product-card { background: #1a302a; border-color: #2b4a3e; }
+    .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,20,10,0.08); }
+    .product-card img { width: 100%; height: 160px; object-fit: cover; border-radius: 20px; background: #f0f5f0; }
+    .product-card .name { font-weight: 700; margin: 10px 0 4px; }
+    .product-card .price { color: #1b4332; font-weight: 700; font-size: 1.2rem; }
+    .dark .product-card .price { color: #a7f3d0; }
+    .product-card .rating { color: #f59e0b; font-size: 0.9rem; }
+    .product-card .actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .product-card .actions button { flex: 1; padding: 6px 0; border-radius: 40px; border: none; font-weight: 600; cursor: pointer; background: #e9f3ef; color: #1b4332; transition: 0.2s; }
+    .dark .product-card .actions button { background: #2b4a3e; color: #d1f0e0; }
+    .product-card .actions button:hover { background: #2d6a4f; color: white; }
+
+    /* cart & wishlist floating panel */
+    .floating-cart {
+      position: fixed;
+      bottom: 100px; right: 20px;
+      background: #1b4332;
+      color: white;
+      padding: 16px 18px;
+      border-radius: 60px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .floating-cart:hover { transform: scale(1.05); background: #2d6a4f; }
+
+    /* whatsapp float */
+    .wa-float {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      background: #25d366;
+      color: white;
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.4rem;
+      box-shadow: 0 8px 28px rgba(37, 211, 102, 0.4);
+      z-index: 999;
+      animation: bounceGlow 2.2s infinite;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    @keyframes bounceGlow {
+      0%,100%{ transform: scale(1); box-shadow: 0 8px 28px rgba(37,211,102,0.4); }
+      50%{ transform: scale(1.1); box-shadow: 0 0 40px #25d366; }
+    }
+    .wa-float:hover { animation: none; transform: scale(1.1); }
+
+    /* toast */
+    .toast-container {
+      position: fixed; top: 90px; right: 20px; z-index: 9999;
+    }
+    .toast {
+      background: #1b4332; color: white; padding: 14px 26px;
+      border-radius: 60px; margin: 8px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      animation: slideIn 0.4s ease;
+    }
+    .dark .toast { background: #2d6a4f; }
+
+    /* footer */
+    .footer {
+      background: #0d2818;
+      color: #d1f0e0;
+      padding: 40px 5% 20px;
+      margin-top: 50px;
+      border-radius: 40px 40px 0 0;
+    }
+    .footer a { color: #a7f3d0; text-decoration: none; }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 30px; }
+
+    /* responsive */
+    @media (max-width: 900px) {
+      .nav-links { display: none; flex-direction: column; width: 100%; background: white; padding: 20px; border-radius: 30px; }
+      .dark .nav-links { background: #143029; }
+      .nav-links.open { display: flex; }
+      .hamburger { display: block; }
+      .hero-slider { height: 300px; }
+      .slide h1 { font-size: 2rem; }
+    }
+    @media (max-width: 600px) {
+      .product-grid { grid-template-columns: repeat(2,1fr); }
+      .kategori-grid { grid-template-columns: repeat(4,1fr); }
+    }
+
+    /* skeleton / loading */
+    .skeleton { background: linear-gradient(90deg, #e9ecef 25%, #f8f9fa 50%, #e9ecef 75%); background-size: 200% 100%; animation: loading 1.8s infinite; border-radius: 20px; }
+    @keyframes loading { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+    /* modal */
+    .modal-overlay {
+      position: fixed; inset:0; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center; z-index: 9999;
+    }
+    .modal-box {
+      background: white; max-width: 500px; width: 90%; padding: 30px; border-radius: 40px; max-height: 80vh; overflow-y: auto;
+    }
+    .dark .modal-box { background: #1d352e; }
+
+    /* utility */
+    .flex { display: flex; gap: 12px; flex-wrap: wrap; }
+    .container { padding: 0 5%; }
+    .section-title { font-size: 2rem; font-weight: 700; margin: 30px 0 16px; }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-logo"><i class="fas fa-leaf"></i>FreshMart</div>
+    <div class="nav-links" id="navLinks">
+      <a href="#home">Home</a>
+      <a href="#produk">Produk</a>
+      <a href="#kategori">Kategori</a>
+      <a href="#promo">Promo</a>
+      <a href="#testimoni">Testimoni</a>
+      <a href="#tentang">Tentang</a>
+      <a href="#kontak">Kontak</a>
+      <div class="nav-icons">
+        <i class="fas fa-search" onclick="alert('🔍 fitur search muncul')"></i>
+        <i class="fas fa-shopping-cart" onclick="openCart()"></i>
+        <i class="fas fa-heart" onclick="alert('❤️ Wishlist')"></i>
+        <i class="fas fa-user" onclick="alert('👤 Login / Daftar')"></i>
+        <i class="fas fa-moon" onclick="toggleDark()"></i>
+      </div>
+    </div>
+    <div class="hamburger" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></div>
+  </nav>
+
+  <!-- Hero Slider -->
+  <section class="hero-slider" id="home">
+    <div class="slide active"><h1>Segar & Cepat <br>Setiap Hari</h1><p>FreshMart hadir dengan 200+ produk berkualitas</p><div class="btn-group"><button class="btn-primary" onclick="alert('Belanja Sekarang')"><i class="fas fa-shopping-bag"></i> Belanja</button><button class="btn-outline" onclick="alert('Lihat Promo')">Lihat Promo</button></div></div>
+    <div class="slide"><h1>Promo Spesial <br>Hingga 50%</h1><p>Flash sale & diskon mingguan</p><div class="btn-group"><button class="btn-primary" onclick="alert('Gas Promo')">Gas Promo</button></div></div>
+    <div class="slide"><h1>Ratusan Produk <br>Makanan & Peralatan</h1><p>Dari sembako hingga alat masak</p><div class="btn-group"><button class="btn-primary" onclick="alert('Jelajahi')">Jelajahi</button></div></div>
+  </section>
+
+  <!-- Kategori -->
+  <div class="container" id="kategori">
+    <h2 class="section-title"><i class="fas fa-th-large"></i> Kategori</h2>
+    <div class="kategori-grid" id="kategoriGrid"></div>
+  </div>
+
+  <!-- Produk -->
+  <div class="container" id="produk">
+    <h2 class="section-title"><i class="fas fa-box"></i> Produk FreshMart</h2>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+
+  <!-- Testimoni -->
+  <div class="container" id="testimoni">
+    <h2 class="section-title"><i class="fas fa-star"></i> Testimoni</h2>
+    <div class="flex" id="testiContainer"></div>
+  </div>
+
+  <!-- Tentang + Kontak -->
+  <div class="container" id="tentang" style="display:grid; grid-template-columns:1fr 1fr; gap:30px; background: #e9f3ef; padding: 30px; border-radius: 40px; margin: 30px auto;">
+    <div><h3><i class="fas fa-store"></i> Tentang FreshMart</h3><p>Belanja cepat, segar, lengkap. Kami hadir dari 2019 dengan ribuan pelanggan puas.</p><p><i class="fas fa-check-circle" style="color:#2d6a4f;"></i> 100% segar</p><p><i class="fas fa-truck"></i> Gratis ongkir min. 100k</p></div>
+    <div id="kontak"><h3><i class="fas fa-phone"></i> Kontak</h3><p><i class="fas fa-map-pin"></i> Jl. Segar No. 88, Jakarta</p><p><i class="fas fa-envelope"></i> hello@freshmart.id</p><p><i class="fas fa-clock"></i> 08.00 - 21.00</p><button class="btn-primary" onclick="alert('Form pesan')"><i class="fas fa-paper-plane"></i> Kirim Pesan</button></div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid"><div><h4>FreshMart</h4><p>Belanja Cepat, Segar, Lengkap</p></div><div><h5>Kategori</h5><a href="#">Makanan</a><br><a href="#">Minuman</a><br><a href="#">Peralatan</a></div><div><h5>Bantuan</h5><a href="#">Pusat Bantuan</a><br><a href="#">Syarat</a></div><div><h5>Ikuti Kami</h5><i class="fab fa-instagram"></i> <i class="fab fa-twitter"></i> <i class="fab fa-youtube"></i></div></div>
+    <div style="text-align:center; margin-top:30px; border-top:1px solid #2d5a44; padding-top:20px;">&copy; 2026 FreshMart · All rights reserved</div>
+  </footer>
+
+  <!-- floating cart & WA -->
+  <div class="floating-cart" onclick="openCart()"><i class="fas fa-shopping-cart"></i> <span id="cartCount">0</span></div>
+  <a href="https://wa.me/6287814530831" target="_blank" class="wa-float" aria-label="Hubungi Kami"><i class="fab fa-whatsapp"></i><span style="position:absolute; bottom:-30px; font-size:0.7rem; background:#1b4332; padding:2px 12px; border-radius:20px; color:white;">Hubungi Kami</span></a>
+
+  <!-- Modal Keranjang -->
+  <div class="modal-overlay" id="cartModal"><div class="modal-box"><h3>🛒 Keranjang</h3><div id="cartItems"></div><hr><p>Total: <span id="cartTotal">Rp0</span></p><button class="btn-primary" onclick="checkout()">Checkout</button> <button onclick="clearCart()" class="btn-outline">Kosongkan</button><button onclick="closeModal('cartModal')">Tutup</button></div></div>
+
+  <script>
+    // ---------- DATA PRODUK (200+) ----------
+    const kategoriList = ['🍔 Makanan Berat','🍕 Fast Food','🍟 Snack','🍩 Roti','🍰 Kue','🍜 Mie','🥩 Daging','🐟 Seafood','🥬 Sayur','🍎 Buah','🥚 Telur','🥛 Susu','☕ Kopi','🧋 Minuman','🥤 Soda','🍹 Jus','🍫 Coklat','🍬 Permen','🍪 Biskuit','🛒 Sembako','🍚 Beras','🧂 Bumbu','🍾 Minyak','🥫 Makanan Kaleng','🧼 Peralatan Rumah','🍽 Peralatan Makan','🔪 Peralatan Masak','🧹 Kebersihan'];
+    const dummyProducts = [];
+    const names = ['Nasi Goreng','Ayam Geprek','Bakso','Mie Ayam','Soto','Rawon','Rendang','Burger','Pizza','Hotdog','Kentang Goreng','Kebab','Sate','Nasi Padang','Ayam Bakar','Ayam Goreng','Es Teh','Es Jeruk','Kopi Susu','Cappuccino','Latte','Americano','Boba','Jus Alpukat','Jus Mangga','Air Mineral','Susu UHT','Teh Botol','Coca-Cola','Sprite','Fanta','Panci','Wajan','Pisau','Sendok','Garpu','Piring','Gelas','Blender','Rice Cooker','Kompor','Dispenser','Tempat Makan','Botol Minum','Sapu','Pel','Garpu','Sendok','Piring','Gelas','Blender','Rice Cooker','Kompor','Dispenser','Tempat Makan','Botol Minum','Sapu','Pel','Mie Instan','Bumbu Rendang','Minyak Goreng','Tepung','Gula','Garam','Kecap','Saos','Coklat Batang','Permen','Biskuit','Roti Tawar','Kue Tart','Donat','Pisang','Apel','Jeruk','Mangga','Alpukat','Telur Ayam','Susu Segar','Kopi Bubuk','Teh Celup','Jus Kemasan','Soda','Air Mineral','Minyak Zaitun','Peralatan Makan','Pisau Dapur','Wajan Anti Lengket'];
+    const categories = ['Makanan Berat','Fast Food','Snack','Roti','Kue','Mie','Daging','Seafood','Sayur','Buah','Telur','Susu','Kopi','Minuman','Soda','Jus','Coklat','Permen','Biskuit','Sembako','Beras','Bumbu','Minyak','Makanan Kaleng','Peralatan Rumah','Peralatan Makan','Peralatan Masak','Kebersihan'];
+    for (let i=0; i<200; i++) {
+      const cat = categories[Math.floor(Math.random() * categories.length)];
+      const name = names[i % names.length] + (i>50 ? ' '+ (i%10) : '');
+      dummyProducts.push({
+        id: i+1,
+        name: name,
+        category: cat,
+        price: 15000 + Math.floor(Math.random() * 200000),
+        discount: Math.random()>0.6 ? Math.floor(Math.random()*30) : 0,
+        rating: (3 + Math.random()*2).toFixed(1),
+        sold: Math.floor(Math.random()*800),
+        stock: Math.floor(Math.random()*200),
+        weight: Math.floor(Math.random()*5)+1,
+        image: `https://picsum.photos/seed/${i+200}/200/200`,
+        desc: 'Produk segar berkualitas dari FreshMart.'
+      });
+    }
+
+    // ---------- RENDER KATEGORI ----------
+    const katGrid = document.getElementById('kategoriGrid');
+    kategoriList.forEach(k => {
+      const div = document.createElement('div');
+      div.className = 'kategori-item';
+      div.innerHTML = k;
+      div.onclick = ()=> { alert(`Filter produk: ${k}`); };
+      katGrid.appendChild(div);
+    });
+
+    // ---------- RENDER PRODUK ----------
+    const productGrid = document.getElementById('productGrid');
+    function renderProducts(products = dummyProducts) {
+      productGrid.innerHTML = '';
+      products.slice(0, 30).forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <img src="${p.image}" alt="${p.name}" onerror="this.src='https://picsum.photos/seed/error/200/200'">
+          <div class="name">${p.name}</div>
+          <div class="price">Rp${p.price.toLocaleString()}</div>
+          <div class="rating"><i class="fas fa-star" style="color:#f59e0b;"></i> ${p.rating} (${p.sold} terjual)</div>
+          <div class="actions">
+            <button onclick="addToCart(${p.id})"><i class="fas fa-cart-plus"></i></button>
+            <button onclick="alert('❤️ Wishlist ${p.id}')"><i class="fas fa-heart"></i></button>
+            <button onclick="alert('Beli Sekarang ${p.id}')"><i class="fas fa-bolt"></i></button>
+            <button onclick="alert('Detail ${p.id}')"><i class="fas fa-eye"></i></button>
+          </div>
+        `;
+        productGrid.appendChild(card);
+      });
+    }
+    renderProducts();
+
+    // ---------- KERANJANG ----------
+    let cart = JSON.parse(localStorage.getItem('freshmart_cart')) || [];
+    function updateCartUI() {
+      document.getElementById('cartCount').innerText = cart.reduce((a,b)=>a+b.qty,0);
+      localStorage.setItem('freshmart_cart', JSON.stringify(cart));
+    }
+    function addToCart(id) {
+      const prod = dummyProducts.find(p=>p.id===id);
+      if(!prod) return;
+      const existing = cart.find(c=>c.id===id);
+      if(existing) existing.qty++;
+      else cart.push({id:prod.id, name:prod.name, price:prod.price, qty:1, image:prod.image});
+      updateCartUI();
+      showToast(`✅ ${prod.name} ditambahkan`);
+    }
+    function openCart() {
+      const modal = document.getElementById('cartModal');
+      modal.style.display = 'flex';
+      renderCartItems();
+    }
+    function renderCartItems() {
+      const container = document.getElementById('cartItems');
+      if(!cart.length) { container.innerHTML='<p>Keranjang kosong</p>'; document.getElementById('cartTotal').innerText='Rp0'; return; }
+      let html = '';
+      let total = 0;
+      cart.forEach((item,i) => {
+        total += item.price * item.qty;
+        html += `<div style="display:flex; gap:12px; align-items:center; border-bottom:1px solid #ddd; padding:8px 0;">
+          <img src="${item.image}" width="50" height="50" style="border-radius:12px;">
+          <div style="flex:1">${item.name} <br> Rp${item.price.toLocaleString()} x ${item.qty}</div>
+          <button onclick="changeQty(${i},1)">+</button>
+          <button onclick="changeQty(${i},-1)">-</button>
+          <button onclick="removeFromCart(${i})"><i class="fas fa-trash"></i></button>
+        </div>`;
+      });
+      container.innerHTML = html;
+      document.getElementById('cartTotal').innerText = `Rp${total.toLocaleString()}`;
+    }
+    function changeQty(idx, delta) {
+      if(cart[idx].qty + delta <= 0) { cart.splice(idx,1); }
+      else { cart[idx].qty += delta; }
+      updateCartUI(); renderCartItems();
+    }
+    function removeFromCart(idx) { cart.splice(idx,1); updateCartUI(); renderCartItems(); }
+    function clearCart() { cart=[]; updateCartUI(); renderCartItems(); showToast('🧹 Keranjang dikosongkan'); }
+    function checkout() { alert('✅ Checkout berhasil (simulasi)'); cart=[]; updateCartUI(); renderCartItems(); closeModal('cartModal'); }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    // ---------- TOAST ----------
+    function showToast(msg) {
+      const container = document.createElement('div');
+      container.className = 'toast-container';
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerText = msg;
+      container.appendChild(toast);
+      document.body.appendChild(container);
+      setTimeout(()=> container.remove(), 2500);
+    }
+
+    // ---------- DARK MODE ----------
+    function toggleDark() { document.body.classList.toggle('dark'); }
+
+    // ---------- MOBILE MENU ----------
+    function toggleMobileMenu() { document.getElementById('navLinks').classList.toggle('open'); }
+
+    // ---------- SLIDER OTOMATIS ----------
+    let slideIndex = 0;
+    setInterval(() => {
+      const slides = document.querySelectorAll('.slide');
+      slides.forEach(s=>s.classList.remove('active'));
+      slideIndex = (slideIndex+1) % slides.length;
+      slides[slideIndex].classList.add('active');
+    }, 4000);
+
+    // ---------- TESTIMONI ----------
+    const testiData = [
+      {name:'Andi', rating:5, comment:'Mantap! belanja mudah.'},
+      {name:'Siti', rating:5, comment:'Segar dan cepat sampai.'},
+      {name:'Budi', rating:4, comment:'Pilihan lengkap, suka.'}
+    ];
+    const testiContainer = document.getElementById('testiContainer');
+    testiData.forEach(t=> {
+      const div = document.createElement('div');
+      div.className = 'glass';
+      div.style.padding='16px 24px'; div.style.borderRadius='40px';
+      div.innerHTML = `<strong>${t.name}</strong> ${'⭐'.repeat(t.rating)} <br> "${t.comment}"`;
+      testiContainer.appendChild(div);
+    });
+
+    // ---------- BACK TO TOP (otomatis) ----------
+    window.addEventListener('scroll', ()=> {
+      if(window.scrollY > 400) document.querySelector('.wa-float')?.style.setProperty('box-shadow','0 0 40px #25d366');
+    });
+
+    // ---------- SKELETON LOADING (simulasi) ----------
+    // sudah terpasang di awal render
+
+    // ---------- INISIALISASI ----------
+    updateCartUI();
+    console.log('FreshMart siap!');
+  </script>
+</body>
+</html>
